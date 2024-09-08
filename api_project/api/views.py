@@ -5,7 +5,7 @@ from rest.framework import generics
 from rest_framework import viewsets
 # Create your views here.
 
-class BookListApiView(viewsets.ModelViewSet):
+class BookViewSet(viewsets.ModelViewSet):
   serializer_class = BookSerializer
   model = Book
   queryset = Book.objects.all()
