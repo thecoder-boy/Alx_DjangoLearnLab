@@ -17,6 +17,44 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile
 from django.contrib.auth.models import User
 from django import forms
+from django.urls import reverse_lazy
+from django.views.generic.edit import UpdateView, DeleteView
+
+class CommentUpdateView(UpdateView):
+    model = Comment
+    fields = ["content"]
+    template_name = "comment_form.html"
+    context_object_name = "comment"
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.author = self.request.user  # Ensure only the author can edit
+        comment.save()
+        return super().form_valid(form)
+
+    def get_queryset(self):
+        """Ensure that only the author can update their comment."""
+        return Comment.objects.filter(author=self.request.user)
+
+    def get_success_url(self):
+        """Redirect to the post detail page after a successful comment edit."""
+        post_id = self.object.post.id
+        return reverse_lazy("post_detail", kwargs={"pk": post_id})
+
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+    template_name = "comment_confirm_delete.html"
+    context_object_name = "comment"
+
+    def get_queryset(self):
+        """Ensure that only the author can delete their comment."""
+        return Comment.objects.filter(author=self.request.user)
+
+    def get_success_url(self):
+        """Redirect to the post detail page after a successful comment deletion."""
+        post_id = self.object.post.id
+        return reverse_lazy("post_detail", kwargs={"pk": post_id})
 
 
 class UserUpdateForm(forms.ModelForm):
