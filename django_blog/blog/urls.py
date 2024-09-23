@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import register, CustomLoginView, CustomLogoutView
 from django.urls import path
+from . import views
 from .views import (
     PostListView,
     PostDetailView,
@@ -30,6 +31,9 @@ urlpatterns = [
     path("comment/<int:pk>/edit/", CommentUpdateView.as_view(), name="comment_edit"),
     path(
         "comment/<int:pk>/delete/", CommentDeleteView.as_view(), name="comment_delete"
+    ),
+    path(
+        "tag/<slug:tag_slug>/", views.TaggedPostListView.as_view(), name="tagged_posts"
     ),
     path("profile/", profile, name="profile"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

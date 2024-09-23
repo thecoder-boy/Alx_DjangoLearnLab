@@ -18,7 +18,25 @@ from .models import Profile
 from django.contrib.auth.models import User
 from django import forms
 from django.urls import reverse_lazy
-from django.views.generic.edit import UpdateView, DeleteView
+# from django.views.generic.edit import UpdateView, DeleteView
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView
+from taggit.models import Tag
+
+
+class TaggedPostListView(ListView):
+    model = Post
+    template_name = "tagged_posts.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        return Post.objects.filter(tags__slug=self.kwargs.get("tag_slug"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tag"] = get_object_or_404(Tag, slug=self.kwargs.get("tag_slug"))
+        return context
+
 
 class CommentUpdateView(UpdateView):
     model = Comment
