@@ -8,8 +8,11 @@ from .views import (
     PostUpdateView,
     PostDeleteView,
     CommentCreateView,
-    PostSearchView
+    PostSearchView,
+    profile,
 )
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("register/", register, name="register"),
@@ -22,4 +25,5 @@ urlpatterns = [
     path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post-delete"),
     path("post/<int:pk>/comment/", CommentCreateView.as_view(), name="post-comment"),
     path("search/", PostSearchView.as_view(), name="post-search"),
-]
+    path("profile/", profile, name="profile"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
